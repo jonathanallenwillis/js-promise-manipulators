@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Example application</title>
+    <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+<h1>Using multiple IP location services to figure out your real location.</h1>
+<div class="container">
+    <div id="map" class="col1"></div>
+    <div class="col2 service-feedback">
+        <h4 class="title">Services</h4>
+        <div class="item">
+            <h5 class="url"></h5>
+            <div class="coords"></div>
+        </div>
+    </div>
+    <script type="text/x-template" id="service-item-tpl">
+        <div class="item">
+            <h5 class="url"><%= url %></h5>
+            <div class="coords"><%= coords %></div>
+        </div>
+    </script>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
+<script type="text/javascript" src="http://dev.openlayers.org/releases/OpenLayers-2.9.1/OpenLayers.js"></script>
+<script type="text/javascript" src="http://mapstraction.com/mxn/build/latest/mxn.js?(openlayers)" type="text/javascript"></script>
+<script type="text/javascript" src="../src/api-amalgamator.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+</body>
+</html>

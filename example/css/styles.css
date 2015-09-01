@@ -1,0 +1,12 @@
+
+#map {
+    height: 400px;
+}
+.col1 {
+    float: left;
+    width: 70%;
+}
+.col2 {
+    float: left;
+    width:30%;
+}
