@@ -3,7 +3,7 @@
  */
 
 
-var jaw_data = require('./jaw-data.js');
+var jaw_data = require('./data.js');
 
 
 /**
@@ -32,7 +32,7 @@ function amalgamator(apiCalls, combiner) {
     var data=null;
     if( typeof combiner!=="function" ) combiner = function(data) { return data; };
     apiCalls.forEach(function(apiCall) {
-        apiCall().done(function(response) {
+        apiCall().then(function(response) {
             if( data===null ) {
                 data = response;
             } else {

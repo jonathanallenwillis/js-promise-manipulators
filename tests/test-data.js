@@ -4,7 +4,7 @@
 
 
 var assert = require("assert");
-var jaw = require('../src/jaw-data.js');
+var jaw = require('../src/data.js');
 
 
 describe('Data object manipulation', function() {
@@ -22,6 +22,21 @@ describe('Data object manipulation', function() {
                 c:3
             };
             assert.deepEqual({ aa: 2 }, jaw.first(o));
+            assert.deepEqual({ aa:2, b:2, c:3 }, o, "original is untouched");
+        });
+
+
+        it('can get the "rest" of the key value pairs in an object except for the "first"', function () {
+            var o = {a:1};
+            assert.deepEqual({}, jaw.rest(o));
+            assert.deepEqual({ a:1 }, o);
+
+            var o = {
+                aa:2,
+                b:2,
+                c:3
+            };
+            assert.deepEqual({ b: 2, c:3 }, jaw.rest(o));
             assert.deepEqual({ aa:2, b:2, c:3 }, o, "original is untouched");
         });
 
@@ -121,6 +136,22 @@ describe('Data object manipulation', function() {
             var o = { a:1, b:2, c:4 };
             assert.deepEqual({ a:null, b:4, c:2 }, jaw.transform(o, {'a':null, 'b':double, 'c':Math.sqrt}));
             assert.deepEqual({ a:1, b:2, c:4 }, o, "orignial is untouched");
+        });
+
+
+        it('can combine manipulators', function() {
+            function double(x) { return x*2; }
+            var o = { a: { a1:1, a2:2 }, b:2, c:4 };
+
+            var actual = jaw.combine(o, [ jaw.flatten, '_' ] );
+            assert.deepEqual({ a_a1:1, a_a2:2, b:2, c: 4 }, actual);
+
+            var actual = jaw.combine(o, jaw.first );
+            assert.deepEqual({ a: { a1:1, a2:2 } }, actual);
+
+            var actual = jaw.combine(o, [ jaw.flatten, '_' ], [ jaw.transform, { 'a_a2': double, bogus: double } ], [ jaw.remap, { a_a2: 'aaa' } ], jaw.rest, jaw.first ); //now where did I put that kitchen sink...
+            assert.deepEqual({ aaa:4 }, actual);
+
         });
 
     })

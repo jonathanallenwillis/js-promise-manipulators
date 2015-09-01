@@ -2,7 +2,9 @@
  * Created by Jonathan Willis on 27/08/15.
  */
 
+
 var __hop = Object.prototype.hasOwnProperty;
+var cloneArray = require('./arrays').clone;
 
 /**
  * Returns the "first" pair in an object according to the for operator.
@@ -24,7 +26,18 @@ function first(obj) {
 }
 
 function rest(obj) {
-    throw new Error('@TODO');
+    var keys = Object.keys(obj);
+    keys.shift();
+
+    //return keys.reduce(function(rest, key) {
+    //    rest[key] = obj[key];
+    //    return rest;
+    //}, {});
+    var rest = {}, i;
+    for( i=0; i<keys.length; i++ ) {
+        rest[keys[i]] = obj[keys[i]];
+    }
+    return rest;
 }
 
 /**
@@ -178,7 +191,7 @@ function transform(obj, transformers) {
     });
 }
 
-function pluck(keys, obj) {
+function pluck(obj, keys) {
     return keys
         .reduce(function(newObj, key) {
             if( obj[key]!==undefined ) {
@@ -188,12 +201,33 @@ function pluck(keys, obj) {
         }, {});
 }
 
+function combine(/* data, fn | array, ... */) {
+    var args = cloneArray(arguments);
+    var data = args.shift();
+    var i;
+
+    for( i=0; i<args.length; i++ ) {
+        if( typeof args[i]==='function' ) {
+            data = args[i].call(this, data);
+        } else if ( args[i] instanceof Array ) {
+            var args2 = args[i];
+            var fn = args2.shift();
+            args2.unshift(data);
+            data = fn.apply(this, args2)
+        }
+    }
+    return data;
+}
+
+
 module.exports = {
-    first: first,
-    shift: shift,
-    reduce: reduce,
-    flatten: flatten,
-    remap: remap,
-    pluck: pluck,
-    transform: transform
+      first:        first
+    , rest:         rest
+    , shift:        shift
+    , reduce:       reduce
+    , flatten:      flatten
+    , remap:        remap
+    , pluck:        pluck
+    , transform:    transform
+    , combine:      combine
 };
