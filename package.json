@@ -10,7 +10,8 @@
     "es6-promise-polyfill": "~1.0.0"
   },
   "devDependencies": {
-    "mocha": "~2.2.5"
+    "mocha": "~2.2.5",
+    "chai": "3.2.0"
   },
   "scripts": {
     "env":  "env",

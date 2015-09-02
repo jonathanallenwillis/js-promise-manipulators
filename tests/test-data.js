@@ -3,7 +3,8 @@
  */
 
 
-var assert = require("assert");
+//var assert = require("assert");
+var assert = require('chai').assert
 var jaw = require('../src/data.js');
 
 
@@ -16,13 +17,18 @@ describe('Data object manipulation', function() {
             assert.deepEqual({ a:1 }, jaw.first(o));
             assert.deepEqual({ a:1 }, o);
 
-            var o = {
+            o = {
                 aa:2,
                 b:2,
                 c:3
             };
             assert.deepEqual({ aa: 2 }, jaw.first(o));
             assert.deepEqual({ aa:2, b:2, c:3 }, o, "original is untouched");
+
+            o = {};
+            var actual = jaw.first(o);
+            assert.deepEqual({}, actual, 'first on empty object returns empty object');
+
         });
 
 

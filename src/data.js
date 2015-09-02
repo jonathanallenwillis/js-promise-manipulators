@@ -22,7 +22,7 @@ function first(obj) {
             return  pair;
         }
     }
-    return [];
+    return {};
 }
 
 function rest(obj) {

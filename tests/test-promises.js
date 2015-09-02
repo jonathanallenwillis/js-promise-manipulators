@@ -6,7 +6,10 @@ if( typeof Promise==="undefined" ) {
     Promise = require('es6-promise-polyfill').Promise
 }
 
-var assert = require("assert");
+//var assert = require("assert");
+var chai = require('chai');
+var assert = chai.assert;
+var AssertionError = chai.AssertionError;
 
 
 var jaw = {
@@ -70,7 +73,7 @@ describe('Promises', function() {
 
                 assertThat(function(err) {
                     try {
-                        assert.ok(err instanceof assert.AssertionError, 'Did not throw an AssertionError');
+                        assert.ok(err instanceof AssertionError, 'Did not throw an AssertionError');
                         done();
                     } catch(e) {
                         done(e);
