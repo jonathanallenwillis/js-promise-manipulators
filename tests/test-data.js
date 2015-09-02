@@ -27,7 +27,7 @@ describe('Data object manipulation', function() {
 
             o = {};
             var actual = jaw.first(o);
-            assert.deepEqual({}, actual, 'first on empty object returns empty object');
+            assert.deepEqual(undefined, actual, 'first on empty object returns undefined');
 
         });
 
@@ -44,6 +44,8 @@ describe('Data object manipulation', function() {
             };
             assert.deepEqual({ b: 2, c:3 }, jaw.rest(o));
             assert.deepEqual({ aa:2, b:2, c:3 }, o, "original is untouched");
+
+            assert.deepEqual(undefined, jaw.rest({}), "rest returns undefined on empty object")
         });
 
 
