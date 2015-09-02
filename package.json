@@ -1,0 +1,28 @@
+{
+  "name": "jaw",
+  "version": "0.0.5",
+  "description": "Tools for manipulating data and data returned from promises.",
+  "directories": {
+    "example": "example",
+    "test": "tests"
+  },
+  "dependencies": {
+    "es6-promise-polyfill": "~1.0.0"
+  },
+  "devDependencies": {
+    "mocha": "~2.2.5"
+  },
+  "scripts": {
+    "env":  "env",
+    "test": "./run-tests.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@jw-bitbucket:jonathanwillis/api-amalgamator.git"
+  },
+  "keywords": [
+    "promise"
+  ],
+  "author": "Jonathan Willis",
+  "license": "GPLv3"
+}
