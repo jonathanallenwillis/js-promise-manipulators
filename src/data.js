@@ -191,13 +191,23 @@ function transform(obj, transformers) {
     });
 }
 
-function pluck(obj, keys) {
+/**
+ * Given a source object and a list of keys, return a new object with only those keys.
+ *
+ * @param src
+ * @param keys
+ * @param includeUndefined      optional defaults to false, whether returned object
+ *                              should contain keys that do not exist in src.
+ * @returns {object}
+ */
+function pluck(src, keys, includeUndefined) {
+    if( typeof includeUndefined!=='boolean' ) includeUndefined=false;
     return keys
-        .reduce(function(newObj, key) {
-            if( obj[key]!==undefined ) {
-                newObj[key] = obj[key];
+        .reduce(function(target, key) {
+            if( includeUndefined || src[key]!==undefined ) {
+                target[key] = src[key];
             }
-            return newObj;
+            return target;
         }, {});
 }
 

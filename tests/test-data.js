@@ -138,6 +138,17 @@ describe('Data object manipulation', function() {
             assert.deepEqual({ a:1, b:2, c:4 }, o, "orignial is untouched");
         });
 
+        it('can pluck a new object from an old', function() {
+            var src = { a:1, b:2, c:'3', d:'4' };
+
+            var actual = jaw.pluck(src, ['a', 'c', 'z']);
+            assert.deepEqual({a:1, c:'3'}, actual, 'target object contains only defined keys');
+            actual.a=321;
+            assert.deepEqual({ a:1, b:2, c:'3', d:'4' }, src, "source object remains untouched");
+
+            var actual = jaw.pluck(src, ['a', 'c', 'z'], true);
+            assert.deepEqual({a:1, c:'3', z:undefined }, actual, 'but target can include undefined keys too');
+        });
 
         it('can combine manipulators', function() {
             function double(x) { return x*2; }
