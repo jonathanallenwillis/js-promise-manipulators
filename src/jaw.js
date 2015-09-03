@@ -4,5 +4,8 @@
 
 
 jaw = {
-    data: require('./data.js')
+      functions: require('./functions')
+    , arrays: require('./arrays')
+    , data: require('./data')
+    , promises: require('./promises')
 };

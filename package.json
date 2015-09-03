@@ -15,7 +15,8 @@
   },
   "scripts": {
     "env":  "env",
-    "test": "./run-tests.sh"
+    "test": "./run-tests.sh",
+    "build": "./bin/build.sh"
   },
   "repository": {
     "type": "git",
