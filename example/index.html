@@ -4,31 +4,43 @@
     <meta charset="UTF-8">
     <title>Example application</title>
     <link rel="stylesheet" href="css/styles.css"/>
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.2/leaflet.css" />
+    <!--[if lte IE 8]>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.2/leaflet.ie.css" />
+    <![endif]-->
 </head>
 <body>
-<h1>Using multiple IP location services to figure out your real location.</h1>
+<h1>Trying to figure out your real location by using multiple IP location services.</h1>
+<h2>Not very accurate even in big cities.</h2>
 <div class="container">
-    <div id="map" class="col1"></div>
+    <div class="col1">
+        <h4 class="title">Map</h4>
+        <div id="map"></div>
+    </div>
     <div class="col2 service-feedback">
         <h4 class="title">Services</h4>
-        <div class="item">
-            <h5 class="url"></h5>
-            <div class="coords"></div>
-        </div>
+        <!-- begin dynamic rows -->
     </div>
-    <script type="text/x-template" id="service-item-tpl">
+    <script type="text/x-template" id="item-row-tpl">
         <div class="item">
-            <h5 class="url"><%= url %></h5>
-            <div class="coords"><%= coords %></div>
+            <div class="icon"><img src="<%= icon_url %>" /></div>
+            <div class="info">
+                <h5 class="title"><%= title %></h5>
+                <div class="coords"><%= coords %></div>
+            </div>
         </div>
     </script>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
+
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.6.2/leaflet.js"></script>
 <script type="text/javascript" src="http://dev.openlayers.org/releases/OpenLayers-2.9.1/OpenLayers.js"></script>
 <script type="text/javascript" src="http://mapstraction.com/mxn/build/latest/mxn.js?(openlayers)" type="text/javascript"></script>
-<script type="text/javascript" src="../src/api-amalgamator.js"></script>
+<script type="text/javascript" src="js/jaw.js"></script>
 <script type="text/javascript" src="js/main.js"></script>
 </body>
 </html>

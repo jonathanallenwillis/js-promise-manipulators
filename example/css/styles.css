@@ -10,3 +10,22 @@
     float: left;
     width:30%;
 }
+
+.item {
+    padding-left: 0.3em;
+    padding-top: 0.1em;
+    padding-bottom: 0.1em;
+    overflow: hidden;
+    margin-bottom: 1em;
+}
+
+.item .icon {
+    float:left;
+    padding-right: 0.25em;
+}
+.item .info {
+    float: left;
+}
+.item .info .title {
+    margin: 0;
+}
