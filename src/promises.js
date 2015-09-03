@@ -116,10 +116,39 @@ function bind(api) {
 
 var manipulators = bind(dataManipulators);
 
+/**
+ * Given one or more promise returning functions and a consolidator function, call each
+ * promise function and apply the consolidator function to it. When all promise fns are
+ * done resolve the promise.
+ *
+ * @param promises
+ * @param consolidatorFn
+ */
+function reduce(promiseFns, consolidatorFn, acc) {
+
+    function resolver(resolve, reject) {
+        var promiseFn = promiseFns.shift();
+        if( promiseFn===undefined ) resolve(acc);
+        promiseFn()
+            .then(
+                function(data) {
+                    acc = acc===undefined
+                            ? data
+                            : consolidatorFn(acc, data);
+                    resolver(resolve, reject);
+                },
+                function(error) {
+                    reject(error);
+                });
+    }
+    return new Promise(resolver);
+}
+
 module.exports = {
       promiseTester:        promiseTester
     , createFakeApiCall:    createFakeApiCall
     , promiseDecorator:     promiseDecorator
     , bind:                 bind
     , manipulators:         manipulators
+    , reduce:               reduce
 };

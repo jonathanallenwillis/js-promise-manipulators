@@ -15,10 +15,12 @@ var AssertionError = chai.AssertionError;
 var jaw = {
       promises:     require('../src/promises.js')
     , data:         require('../src/data.js')
+    , functions:    require('../src/functions.js')
 };
 var promiseTester = jaw.promises.promiseTester;
 var createFakeApiCall = jaw.promises.createFakeApiCall;
 var manipulators = jaw.promises.manipulators;
+var partialRight = jaw.functions.partialRight;
 
 describe('Promises', function() {
     function isEmptyObject(obj) {
@@ -204,6 +206,51 @@ describe('Promises', function() {
 
             assertThat(done)(apiCall())
                 .deepEqual(expected);
+
+        });
+
+
+        it('can reduce any number of promise producing functions into one value', function(done) {
+
+            var c1 = createFakeApiCall({ a:1 }, undefined, 400);
+            var c2 = createFakeApiCall({ a:10 }, undefined, 400);
+            var c3 = createFakeApiCall({ a:100 }, undefined, 400);
+
+            assertThat(done)(jaw.promises.reduce([c1, c2, c3], function(acc, data){
+                acc.a = acc.a + data.a;
+                return acc;
+            }, { a:0 }))
+                .deepEqual({ a:111 });
+
+        });
+
+
+        it('can reduce any number of promise producing functions into one value without accumulator', function(done) {
+
+            var c1 = createFakeApiCall({ a:1 }, undefined, 400);
+            var c2 = createFakeApiCall({ a:10 }, undefined, 400);
+            var c3 = createFakeApiCall({ a:100 }, undefined, 400);
+
+            assertThat(done)(jaw.promises.reduce([c1, c2, c3], function(acc, data) {
+                acc.a = acc.a + data.a;
+                return acc;
+            })).deepEqual({ a:111 });
+
+        });
+
+
+        it('can reduce any number of promise producing functions into one value and can be partialed', function(done) {
+
+            var c1 = createFakeApiCall({ a:1 }, undefined, 400);
+            var c2 = createFakeApiCall({ a:10 }, undefined, 400);
+            var c3 = createFakeApiCall({ a:100 }, undefined, 400);
+
+            var apiCall = partialRight(jaw.promises.reduce, function(acc, data) {
+                acc.a = acc.a + data.a;
+                return acc;
+            });
+
+            assertThat(done)(apiCall([c1, c2, c3])).deepEqual({ a:111 });
 
         });
     });
