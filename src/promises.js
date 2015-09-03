@@ -8,20 +8,7 @@
 var dataManipulators = require('./data.js');
 var cloneArray = require('./arrays.js').clone;
 var partialRight = require('./functions.js').partialRight;
-
-
-function randomInteger(minOrMax, maybeMax) {
-    var min, max;
-    if( maybeMax===undefined ) {
-        min=0; max=minOrMax;
-    } else {
-        min=minOrMax; max=maybeMax+1;
-    }
-    return Math.floor(Math.random()*(max-min))+min;
-}
-function randomTimeout(fn, minOrMax, maybeMax) {
-    setTimeout(fn, randomInteger(minOrMax, maybeMax));
-}
+var randomTimeout = require('./random.js').timeout;
 
 
 function createFakeApiCall(data, id, minOrMax, maybeMax) {
@@ -128,7 +115,10 @@ function reduce(promiseFns, consolidatorFn, acc) {
 
     function resolver(resolve, reject) {
         var promiseFn = promiseFns.shift();
-        if( promiseFn===undefined ) resolve(acc);
+        if( promiseFn===undefined ) {
+            resolve(acc);
+            return;
+        }
         promiseFn()
             .then(
                 function(data) {

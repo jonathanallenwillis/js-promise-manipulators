@@ -6,6 +6,7 @@
 jaw = {
       functions: require('./functions')
     , arrays: require('./arrays')
+    , random: require('./random')
     , data: require('./data')
     , promises: require('./promises')
 };

@@ -2,8 +2,6 @@
  * Created by Jonathan Willis on 01/09/15.
  */
 
-
-
 var __slice = require('./arrays.js').clone;
 
 function partial(/* fn,  arg* */) {
@@ -22,6 +20,8 @@ function partialRight(/* fn,  arg* */) {
         return fn.apply(this, leftArgs.concat(rightArgs));
     };
 }
+
+
 
 module.exports = {
       partial:      partial

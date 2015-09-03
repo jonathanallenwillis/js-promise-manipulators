@@ -258,8 +258,6 @@ module.exports = {
  * Created by Jonathan Willis on 01/09/15.
  */
 
-
-
 var __slice = require('./arrays.js').clone;
 
 function partial(/* fn,  arg* */) {
@@ -279,6 +277,8 @@ function partialRight(/* fn,  arg* */) {
     };
 }
 
+
+
 module.exports = {
       partial:      partial
     , partialRight: partialRight
@@ -292,10 +292,11 @@ module.exports = {
 jaw = {
       functions: require('./functions')
     , arrays: require('./arrays')
+    , random: require('./random')
     , data: require('./data')
     , promises: require('./promises')
 };
-},{"./arrays":1,"./data":2,"./functions":3,"./promises":5}],5:[function(require,module,exports){
+},{"./arrays":1,"./data":2,"./functions":3,"./promises":5,"./random":6}],5:[function(require,module,exports){
 /**
  * Created by Jonathan Willis on 28/08/15.
  *
@@ -306,20 +307,7 @@ jaw = {
 var dataManipulators = require('./data.js');
 var cloneArray = require('./arrays.js').clone;
 var partialRight = require('./functions.js').partialRight;
-
-
-function randomInteger(minOrMax, maybeMax) {
-    var min, max;
-    if( maybeMax===undefined ) {
-        min=0; max=minOrMax;
-    } else {
-        min=minOrMax; max=maybeMax+1;
-    }
-    return Math.floor(Math.random()*(max-min))+min;
-}
-function randomTimeout(fn, minOrMax, maybeMax) {
-    setTimeout(fn, randomInteger(minOrMax, maybeMax));
-}
+var randomTimeout = require('./random.js').timeout;
 
 
 function createFakeApiCall(data, id, minOrMax, maybeMax) {
@@ -426,7 +414,10 @@ function reduce(promiseFns, consolidatorFn, acc) {
 
     function resolver(resolve, reject) {
         var promiseFn = promiseFns.shift();
-        if( promiseFn===undefined ) resolve(acc);
+        if( promiseFn===undefined ) {
+            resolve(acc);
+            return;
+        }
         promiseFn()
             .then(
                 function(data) {
@@ -450,4 +441,34 @@ module.exports = {
     , manipulators:         manipulators
     , reduce:               reduce
 };
-},{"./arrays.js":1,"./data.js":2,"./functions.js":3}]},{},[4]);
+},{"./arrays.js":1,"./data.js":2,"./functions.js":3,"./random.js":6}],6:[function(require,module,exports){
+/**
+ * Created by Jonathan Willis on 03/09/15.
+ */
+
+
+function randomInteger(minOrMax, maybeMax) {
+    var min, max;
+    if( maybeMax===undefined ) {
+        min=0; max=minOrMax;
+    } else {
+        min=minOrMax; max=maybeMax+1;
+    }
+    return Math.floor(Math.random()*(max-min))+min;
+}
+
+
+function randomTimeout(fn, minOrMax, maybeMax) {
+    setTimeout(fn, randomInteger(minOrMax, maybeMax));
+}
+
+function randomLetter(from, to) {
+    return String.fromCharCode(randomInteger(from.charCodeAt(0), to.charCodeAt(0)));
+}
+
+module.exports = {
+      integer:  randomInteger
+    , timeout:  randomTimeout
+    , letter:   randomLetter
+};
+},{}]},{},[4]);
