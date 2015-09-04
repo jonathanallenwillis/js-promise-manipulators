@@ -10,26 +10,60 @@ var cloneArray = require('./arrays.js').clone;
 var partialRight = require('./functions.js').partialRight;
 var randomTimeout = require('./random.js').timeout;
 
+/**
+ * Create a mock API call.
+ *
+ * @param data
+ * @param opts
+ * @returns {Function}
+ */
+function mockApiCall(data, opts) {
+    var defaults = {
+          id:           undefined
+        , min:          50
+        , max:          500
+        , exact:        undefined
+        , successful:   true
+        , errorMsg:     'Call failed!'
+        , processResult:function(result) { return result; }
+    };
+    opts = dataManipulators.merge(defaults, opts);
 
-function createFakeApiCall(data, id, minOrMax, maybeMax) {
-
+    function theResolution(data) {
+        return opts.id === undefined
+                ? data
+                : {
+                    id: opts.id,
+                    payload: data
+                };
+    }
+    function doResolution(fn, data) {
+        fn(opts.processResult(theResolution(data)));
+    }
+    function doCall(resolve, reject) {
+        return function() {
+            if (opts.successful) doResolution(resolve, data);
+            else doResolution(reject, new Error(opts.errorMsg));
+        };
+    }
     return function() {
 
         return new Promise(function(resolve, reject) {
-            randomTimeout(function() {
-                if( id===undefined ) resolve(data);
-                else resolve({
-                    id: id,
-                    payload: data
-                });
-            }, minOrMax, maybeMax);
+            if( opts.exact>-1 ) setTimeout(doCall(resolve, reject), opts.exact);
+            else                randomTimeout(doCall(resolve, reject), opts.min, opts.max);
         });
     };
 }
 
 
-
-function promiseTester(assert) {
+/**
+ * Given an assertion framework, return an assertion framework that matches the api
+ * but can be used to assert the results of promises.
+ *
+ * @param assertApi
+ * @returns {Function}
+ */
+function promiseTester(assertApi) {
     var promise, done, nterface;
     function createWrapper(fn) {
         return function() {
@@ -38,7 +72,7 @@ function promiseTester(assert) {
                 function(actual) {
                     try {
                         args.push(actual);
-                        assert[fn].apply(this, args);
+                        assertApi[fn].apply(this, args);
                         done();
                     } catch(err) {
                         done(err);
@@ -48,17 +82,17 @@ function promiseTester(assert) {
                 });
         };
     }
-    function buildInterface(assert) {
+    function buildInterface(assertApi) {
         var prop, nterface = {};
 
-        for( prop in  assert ) {
-            if ( typeof assert[prop]==='function' ) {
+        for( prop in  assertApi ) {
+            if ( typeof assertApi[prop]==='function' ) {
                 nterface[prop] = createWrapper(prop);
             }
         }
         return nterface;
     }
-    nterface = buildInterface(assert);
+    nterface = buildInterface(assertApi);
 
     return function(doneInstance) {
         done = doneInstance;
@@ -93,7 +127,14 @@ function promiseDecorator(manipulatorFn) {
         };
     };
 }
-
+/**
+ * Given an api of functions that take an object as their first argument,
+ * wrap them in a promise so that the result of the promise has that
+ * function applied to it.
+ *
+ * @param api
+ * @returns {object}
+ */
 function bind(api) {
     return dataManipulators.reduce(api, function(newApi, fn, name) {
         newApi[name] = promiseDecorator(fn);
@@ -134,11 +175,145 @@ function reduce(promiseFns, consolidatorFn, acc) {
     return new Promise(resolver);
 }
 
+/**
+ * Turns a function that returns a promise into one with a timeout.
+ *
+ * @param promiseFn
+ * @param timeout
+ * @returns {Function}
+ */
+
+function timeout(promiseFn, timeout) {
+    var TIMED_OUT_MSG = 'TIMED OUT';
+    var hasTimedout = false;
+
+    function timeoutDecorator(fn) {
+        return function() {
+            if( hasTimedout ) return;
+            clearTimeout(timeoutId);
+            fn.apply(this, arguments);
+        };
+    }
+
+    return function() {
+        return new Promise(function (resolve, reject) {
+            var timeoutId = setTimeout(function () {
+                hasTimedout = true;
+                reject(new Error(TIMED_OUT_MSG));
+            }, timeout);
+
+            promiseFn.apply(this, arguments)
+                .then(timeoutDecorator(resolve), timeoutDecorator(reject));
+        });
+    };
+}
+
+/**
+ * Turns anything into a string that can be used as a key.
+ *
+ * @param item
+ * @returns {string}
+ */
+function toKeyString(item) {
+    if( item instanceof Object ) {
+        // Unsure if this is a valid method.
+        return JSON.stringify(item).replace(/["':_%!@#$%^&*()]/, '');
+    } else {
+        return item.toString();
+    }
+}
+
+/**
+ * Creates a unique key from 0+ arguments.
+ *
+ * @returns {string}    string that can be used as a key to an object map.
+ */
+function createKey() {
+    var i, key='k';
+    for(i=0; i<arguments.length; i++) {
+        key = key + '.' + toKeyString(arguments[i]);
+    }
+    return key;
+}
+
+/**
+ * Given a function that returns a promise, cache the results using the
+ * combination of the arguments as a key.
+ *
+ * Each call is unique by the combination of parameters with which it is called.
+ *
+ * @param promiseFn
+ * @param identity      a function that takes n number of arguments and
+ *                      creates a unique value from them
+ * @returns {Function}
+ */
+function memoize(promiseFn, identity) {
+    var RESOLVE = 0, REJECT = 1;
+    if( identity===undefined ) identity=createKey;
+    var cache = {};
+
+    function resolve(cacheItem) {
+        var resolver, resolution = cacheItem.resolution;
+        while( (resolver = cacheItem.resolvers.shift())!==undefined ) {
+            resolver[RESOLVE].apply(this, resolution);
+        }
+        delete cacheItem.resolvers;
+    }
+    function createPromise(cacheItem) {
+        return new Promise(function (resolve, reject) {
+            cacheItem.resolvers.push([resolve, reject]);
+        });
+    }
+
+    function doPromiseFn(promiseFnArgs, cacheKey, cacheItem) {
+        promiseFn
+            .apply(this, promiseFnArgs)
+            .then(function () {
+                //finalize(cacheItem.resolvers, RESOLVE, arguments);
+                cacheItem.resolution = arguments;
+                resolve(cacheItem);
+            }, function () {
+                var resolver = cacheItem.resolvers.shift();
+                resolver[REJECT].apply(this, arguments);
+                if (cacheItem.resolvers.length > 0) {
+                    doPromiseFn(promiseFnArgs, cacheKey, cacheItem);
+                } else {
+                    delete cache[cacheKey]; // don't cache failures
+                }
+            });
+    }
+
+    return function() {
+        var key = identity.apply(this, arguments);
+        if ( cache[key]===undefined ) {
+            // brand new call
+            var cacheItem = {
+                resolution: undefined,
+                resolvers: []
+            };
+            doPromiseFn(arguments, key, cacheItem);
+            cache[key] = cacheItem;
+            return createPromise(cacheItem);
+        } else {
+            // call in progress
+            if ( cache[key].resolution===undefined ) {
+                // pending
+                return createPromise(cache[key]);
+            } else {
+                // resolved
+                return Promise.resolve(cache[key].resolution);
+            }
+        }
+    };
+}
+
 module.exports = {
       promiseTester:        promiseTester
-    , createFakeApiCall:    createFakeApiCall
+    , mockApiCall:    mockApiCall
     , promiseDecorator:     promiseDecorator
     , bind:                 bind
     , manipulators:         manipulators
     , reduce:               reduce
+    , timeout:              timeout
+    , memoize:              memoize
 };
