@@ -4,6 +4,7 @@
   "description": "Tools for manipulating data and data returned from promises.",
   "directories": {
     "example": "example",
+    "source": "src",
     "test": "tests"
   },
   "dependencies": {
