@@ -60,13 +60,13 @@ var LocationServices = {
     , telize:       createApiCall('http://www.telize.com/geoip')
 };
 
-var createFakeApiCall = jaw.promises.createFakeApiCall;
-var LocationServices = {
-      ipapi:        createFakeApiCall({"url":"http://ip-api.com/json/", "as":"AS5645 TekSavvy Solutions, Inc.","city":"Toronto","country":"Canada","countryCode":"CA","isp":"TekSavvy Solutions","lat":43.6899,"lon":-79.3853,"org":"TekSavvy Solutions","query":"107.179.159.142","region":"ON","regionName":"Ontario","status":"success","timezone":"America/Toronto","zip":"M4T"}, undefined, 300)
-    , freegeoip:    createFakeApiCall({"url":"http://freegeoip.net/json/", "ip":"107.179.159.142","country_code":"CA","country_name":"Canada","region_code":"","region_name":"","city":"","zip_code":"","time_zone":"","latitude":43.643,"longitude":-79.388,"metro_code":0},undefined, 300)
-    , ipinfo:       createFakeApiCall({"url":"http://ipinfo.io/", "ip": "107.179.159.142","hostname": "107-179-159-142.cpe.teksavvy.com","city": null,"country": "CA","loc": "43.6425,-79.3872","org": "AS5645 TekSavvy Solutions, Inc."},undefined, 300)
-    , telize:       createFakeApiCall({"url":"http://www.telize.com/geoip", "country_code3":"CAN","country":"Canada","isp":"TekSavvy Solutions, Inc.","country_code":"CA","dma_code":"0","continent_code":"NA","area_code":"0","ip":"107.179.159.142","asn":"AS5645","latitude":43.6425,"longitude":-79.3872})
-};
+//var mockApiCall = jaw.promises.mockApiCall;
+//var LocationServices = {
+//      ipapi:        mockApiCall({"url":"http://ip-api.com/json/", "as":"AS5645 TekSavvy Solutions, Inc.","city":"Toronto","country":"Canada","countryCode":"CA","isp":"TekSavvy Solutions","lat":43.6899,"lon":-79.3853,"org":"TekSavvy Solutions","query":"107.179.159.142","region":"ON","regionName":"Ontario","status":"success","timezone":"America/Toronto","zip":"M4T"}, { max: 150 })
+//    , freegeoip:    mockApiCall({"url":"http://freegeoip.net/json/", "ip":"107.179.159.142","country_code":"CA","country_name":"Canada","region_code":"","region_name":"","city":"","zip_code":"","time_zone":"","latitude":43.643,"longitude":-79.388,"metro_code":0}, { max: 150 })
+//    , ipinfo:       mockApiCall({"url":"http://ipinfo.io/", "ip": "107.179.159.142","hostname": "107-179-159-142.cpe.teksavvy.com","city": null,"country": "CA","loc": "43.6425,-79.3872","org": "AS5645 TekSavvy Solutions, Inc."}, { max: 150 })
+//    , telize:       mockApiCall({"url":"http://www.telize.com/geoip", "country_code3":"CAN","country":"Canada","isp":"TekSavvy Solutions, Inc.","country_code":"CA","dma_code":"0","continent_code":"NA","area_code":"0","ip":"107.179.159.142","asn":"AS5645","latitude":43.6425,"longitude":-79.3872}, { max: 150 })
+//};
 
 var manipulators = jaw.promises.manipulators;
 var LocationServicesNormalized = {
