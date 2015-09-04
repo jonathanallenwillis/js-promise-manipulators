@@ -25,6 +25,15 @@ function first(obj) {
     return undefined;
 }
 
+/**
+ * Returns the object minus the "first" pair in object according to the for operator.
+ *
+ * WARNING: do not assume order.
+ *
+ * @param obj
+ * @returns {object}
+ */
+
 function rest(obj) {
     var keys = Object.keys(obj);
 
@@ -103,8 +112,8 @@ function isObject(maybeObject) {
 }
 
 /**
- * Given POO of arbitrary depth and an optional separator
- * and creates a new one level deep POO.
+ * Given a POJO of arbitrary depth and an optional separator
+ * and creates a new one level deep POJO.
  *
  * @param obj
  * @param separator     defaults to '/'
@@ -137,8 +146,8 @@ function explode(obj, separator) {
     throw new Error('@TODO')
 }
 /**
- * Given POO and a mapping, creates new POO with keys remapped.
- * If exclusive is true, the new POO will not include the keys
+ * Given a POJO and a mapping, creates a new POJO with keys remapped.
+ * If exclusive is true, the new POJO will not include the keys
  * not in map,
  *
  * WARNING: Not recursive
@@ -163,8 +172,8 @@ function remap(obj, map, exclusive) {
 }
 
 /**
- * Given POO and a mapping of keys to transformer functions or values,
- * creates new POO with values transformed.
+ * Given a POJO and a mapping of keys to transformer functions or values,
+ * creates a new POJO with values transformed.
  *
  * WARNING: Not recursive
  *  - transformers map should only be one level deep
@@ -209,6 +218,15 @@ function pluck(src, keys, includeUndefined) {
         }, {});
 }
 
+/**
+ * Given a POJO and a list of:
+ *   - functions
+ *   - arrays with format [ fn, arg1, ..., argn ]
+ *
+ * apply each to the POJO and return the final transformation.
+ * 
+ * @returns {Object|!WebInspector.TextRange|T|*}
+ */
 function combine(/* data, fn | array, ... */) {
     var args = cloneArray(arguments);
     var data = args.shift();
