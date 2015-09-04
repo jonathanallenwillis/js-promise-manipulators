@@ -226,6 +226,25 @@ function combine(/* data, fn | array, ... */) {
     }
     return data;
 }
+/**
+ * Non-destructive non-deep merge.
+ *
+ * @returns {{}}
+ */
+function merge(/* obj1, ..., objn */) {
+    function destructiveMerge(o1, o2) {
+        var key;
+        for( key in o2 ) {
+            o1[key] = o2[key];
+        }
+        return o1;
+    }
+    var all = {}, i;
+    for( i=0; i<arguments.length; i++ ) {
+        destructiveMerge(all, arguments[i]);
+    }
+    return all;
+}
 
 
 module.exports = {
@@ -238,4 +257,5 @@ module.exports = {
     , pluck:        pluck
     , transform:    transform
     , combine:      combine
+    , merge:        merge
 };

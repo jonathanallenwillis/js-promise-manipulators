@@ -134,7 +134,7 @@ describe('Data object manipulation', function() {
 
             var o = { a:1, b:2 };
             assert.deepEqual({ b:1, a:2 }, jaw.remap(o, {'a':'b', 'b':'a'}), "can be used for a switch");
-            assert.deepEqual({ a:1, b:2 }, o, "orignial is untouched");
+            assert.deepEqual({ a:1, b:2 }, o, "original is untouched");
         });
 
 
@@ -173,5 +173,44 @@ describe('Data object manipulation', function() {
 
         });
 
-    })
+        describe('merge', function() {
+
+            it('acts like clone with only 1 object due to its non destructive nature', function() {
+                var expected = { a:2, b:'c', d:null };
+                var actual = jaw.merge(expected);
+                assert.deepEqual(expected, actual);
+            });
+
+            it('is non destructive', function() {
+                var expected = { a:2, b:'c', d:null };
+                var actual = jaw.merge(expected);
+                assert.deepEqual(expected, actual);
+                actual.z = 123;
+                assert.deepEqual({ a:2, b:'c', d:null }, expected, 'original is untouched');
+            });
+
+            it('is non deep so be careful', function() {
+                var o1 = { a:['x', 'y'], b:'c'},
+                    o2 = { d:null };
+                var actual = jaw.merge(o1, o2);
+                actual.z = 123;
+                assert.deepEqual({ a:['x', 'y'], b:'c'}, o1, 'original is untouched');
+                assert.deepEqual({ d:null }, o2, 'original is untouched');
+
+                actual.a[0] = 'z';
+                assert.deepEqual({ a:['z', 'y'], b:'c'}, o1, 'original is modified');
+            });
+
+
+            it('can accept 1+ objects', function() {
+                var o1 = { a:['x', 'y'] },
+                    o2 = { b:'c'},
+                    o3 = { d:null };
+                var actual = jaw.merge(o1, o2, o3);
+                assert.deepEqual({ a:['x', 'y'], b:'c', d:null }, actual, 'original is modified');
+            });
+
+
+        });
+    });
 });
