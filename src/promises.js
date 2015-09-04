@@ -19,12 +19,18 @@ var randomTimeout = require('./random.js').timeout;
  */
 function mockApiCall(data, opts) {
     var defaults = {
+        // If a string then changes the resolve/rejects to the format { id: id, payload: data }
           id:           undefined
+        // If this is >=0 then an exact timeout is set
+        , exact:        undefined
+        // When exact is undefined, do a call of random timeout in between min-max ms
         , min:          50
         , max:          500
-        , exact:        undefined
+        // whether this call succeeds
         , successful:   true
+        // error message to use on failure
         , errorMsg:     'Call failed!'
+        // a hook to do some processing of the result before its resolved.
         , processResult:function(result) { return result; }
     };
     opts = dataManipulators.merge(defaults, opts);
@@ -49,7 +55,7 @@ function mockApiCall(data, opts) {
     return function() {
 
         return new Promise(function(resolve, reject) {
-            if( opts.exact>-1 ) setTimeout(doCall(resolve, reject), opts.exact);
+            if( opts.exact>=0 ) setTimeout(doCall(resolve, reject), opts.exact);
             else                randomTimeout(doCall(resolve, reject), opts.min, opts.max);
         });
     };
