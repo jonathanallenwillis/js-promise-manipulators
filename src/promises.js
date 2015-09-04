@@ -53,7 +53,6 @@ function mockApiCall(data, opts) {
         };
     }
     return function() {
-
         return new Promise(function(resolve, reject) {
             if( opts.exact>=0 ) setTimeout(doCall(resolve, reject), opts.exact);
             else                randomTimeout(doCall(resolve, reject), opts.min, opts.max);
@@ -111,7 +110,7 @@ function promiseTester(assertApi) {
 
 
 /**
- * Given a data manipulation function, convert it into a promise converting
+ * Given a data manipulation function, convert it into a promise result manipulating
  * function.
  *
  * @param manipulatorFn     A function that takes data as its first argument
