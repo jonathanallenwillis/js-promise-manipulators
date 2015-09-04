@@ -120,7 +120,7 @@ function isObject(maybeObject) {
  * @returns {object}    new object
  */
 function flatten(obj, separator) {
-    separator = separator || DEFAULT_SEPARATOR;
+    if( typeof separator!=='string' ) separator = DEFAULT_SEPARATOR;
     function helper(obj, newObj, prefix) {
         return reduce(obj, function(newObj, v, k) {
             var newKey = prefix + separator + k;
@@ -224,7 +224,7 @@ function pluck(src, keys, includeUndefined) {
  *   - arrays with format [ fn, arg1, ..., argn ]
  *
  * apply each to the POJO and return the final transformation.
- * 
+ *
  * @returns {Object|!WebInspector.TextRange|T|*}
  */
 function combine(/* data, fn | array, ... */) {

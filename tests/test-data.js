@@ -123,6 +123,9 @@ describe('Data object manipulation', function() {
             var o = { a:{ aa: 1 }, b:2, c:{ cc:{ ccc:1, ccc2:2 }, cc2:3 } };
             var actual = jaw.flatten(o, '_');
             assert.deepEqual({ a_aa:1, b:2, c_cc_ccc:1, c_cc_ccc2:2, c_cc2:3 }, actual, "flatten can use arbitrary separator");
+
+            var actual = jaw.flatten(o, '');
+            assert.deepEqual({ aaa:1, b:2, cccccc:1, cccccc2:2, ccc2:3 }, actual, "flatten can use empty string as separator");
         });
 
 
