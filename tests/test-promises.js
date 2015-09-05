@@ -109,16 +109,16 @@ describe('Promises', function() {
 
         it('can create a successful fake api call', function(done) {
             var expected = { abc:123, doremi:'abc', 123:'babyyouandme' };
-            var apiCall = mockApiCall(expected, { max:400 });
+            var apiCall = mockApiCall(expected, { max:100 });
 
             assertThat(done)(apiCall())
                 .deepEqual(expected);
         });
 
         it('can create an unsuccessful fake api call', function(done) {
-            this.timeout(900);
+            this.timeout(200);
             var desired = { abc:123, doremi:'abc', 123:'babyyouandme' };
-            var apiCall = mockApiCall(desired, { max:400, successful: false });
+            var apiCall = mockApiCall(desired, { max:100, successful: false });
 
             apiCall().catch(function(err) {
                 try {
@@ -133,7 +133,7 @@ describe('Promises', function() {
         it('can attach an identity to a successfull result', function(done) {
             this.timeout(300);
             var expected = { abc:123, doremi:'abc', 123:'babyyouandme' };
-            var apiCall = mockApiCall(expected, { id:'get_data', max:200 });
+            var apiCall = mockApiCall(expected, { id:'get_data', max:100 });
 
 
             assertThat(done)(apiCall())
@@ -147,7 +147,7 @@ describe('Promises', function() {
         it('can attach an identity to a failed result', function(done) {
             this.timeout(300);
             var expected = { abc:123, doremi:'abc', 123:'babyyouandme' };
-            var apiCall = mockApiCall(expected, { id:'get_data', max:200, successful: false });
+            var apiCall = mockApiCall(expected, { id:'get_data', max:100, successful: false });
 
 
             apiCall().catch(function(err) {
@@ -168,7 +168,7 @@ describe('Promises', function() {
 
         it('can transform the result', function (done) {
             var data = {abc: 123, doremi: 'abc', 123: 'babyyouandme'};
-            var apiCall = mockApiCall(data, { max:400 });
+            var apiCall = mockApiCall(data, { max:100 });
 
             var transformers = {
                 abc: function (v) {
@@ -191,7 +191,7 @@ describe('Promises', function() {
         it('can remap data', function (done) {
 
             var data = {a: 123, b: 'abc', c: 'babyyouandme'};
-            var apiCall = mockApiCall(data, { max:400 });
+            var apiCall = mockApiCall(data, { max:100 });
 
             var map = {
                 a: 'aaa'
@@ -211,7 +211,7 @@ describe('Promises', function() {
         it('can get first pair in returned data', function (done) {
 
             var data = {a: 123, b: 'abc', c: 'babyyouandme'};
-            var apiCall = mockApiCall(data, { max:400 });
+            var apiCall = mockApiCall(data, { max:100 });
 
             apiCall = manipulators.first(apiCall);
             var expected = {a: 123};
@@ -224,7 +224,7 @@ describe('Promises', function() {
         it('can flatten returned data (flat)', function (done) {
 
             var data = {a: 123, b: 'abc', c: 'babyyouandme'};
-            var apiCall = mockApiCall(data, { max:400 });
+            var apiCall = mockApiCall(data, { max:100 });
 
             apiCall = manipulators.flatten(apiCall);
 
@@ -236,7 +236,7 @@ describe('Promises', function() {
         it('can flatten returned data (deep)', function (done) {
 
             var data = {a: {b: 'abc', c: 123, d: {e: {f: null}}}, aa: 'xyz'};
-            var apiCall = mockApiCall(data, { max:400 });
+            var apiCall = mockApiCall(data, { max:100 });
 
             apiCall = manipulators.flatten(apiCall, '_');
 
@@ -253,7 +253,7 @@ describe('Promises', function() {
             }
 
             var data = {a: {a1: 1, a2: 2}, b: 2, c: 4};
-            var apiCall = mockApiCall(data, { max:400 });
+            var apiCall = mockApiCall(data, { max:100 });
 
 
             apiCall = manipulators.combine(apiCall, [jaw.data.flatten, '_'], [jaw.data.transform, {
@@ -272,9 +272,9 @@ describe('Promises', function() {
     describe('reduce', function() {
         it('can reduce any number of promise producing functions into one value', function(done) {
 
-            var c1 = mockApiCall({ a:1 }, { max:400 });
-            var c2 = mockApiCall({ a:10 }, { max:400 });
-            var c3 = mockApiCall({ a:100 }, { max:400 });
+            var c1 = mockApiCall({ a:1 }, { max:100 });
+            var c2 = mockApiCall({ a:10 }, { max:100 });
+            var c3 = mockApiCall({ a:100 }, { max:100 });
 
             assertThat(done)(jaw.promises.reduce([c1, c2, c3], function(acc, data){
                 acc.a = acc.a + data.a;
@@ -287,9 +287,9 @@ describe('Promises', function() {
 
         it('can reduce any number of promise producing functions into one value without accumulator', function(done) {
 
-            var c1 = mockApiCall({ a:1 }, { max:400 });
-            var c2 = mockApiCall({ a:10 }, { max:400 });
-            var c3 = mockApiCall({ a:100 }, { max:400 });
+            var c1 = mockApiCall({ a:1 }, { max:100 });
+            var c2 = mockApiCall({ a:10 }, { max:100 });
+            var c3 = mockApiCall({ a:100 }, { max:100 });
 
             assertThat(done)(jaw.promises.reduce([c1, c2, c3], function(acc, data) {
                 acc.a = acc.a + data.a;
@@ -301,9 +301,9 @@ describe('Promises', function() {
 
         it('can reduce any number of promise producing functions into one value and can be partialed', function(done) {
 
-            var c1 = mockApiCall({ a:1 }, { max:400 });
-            var c2 = mockApiCall({ a:10 }, { max:400 });
-            var c3 = mockApiCall({ a:100 }, { max:400 });
+            var c1 = mockApiCall({ a:1 }, { max:100 });
+            var c2 = mockApiCall({ a:10 }, { max:100 });
+            var c3 = mockApiCall({ a:100 }, { max:100 });
 
             var apiCall = partialRight(jaw.promises.reduce, function(acc, data) {
                 acc.a = acc.a + data.a;
@@ -315,29 +315,12 @@ describe('Promises', function() {
         });
     });
 
-    describe('timeout can turn a promise producing function into one with a timeout', function(done) {
+    describe('timeout can turn a promise producing function into one with a timeout', function() {
 
-        it('rejects with an Error object', function() {
-            var apiCall = mockApiCall({ a:100 }, { max:400 });
+        it('rejects with an Error object on timeout', function(done) {
+            var apiCall = mockApiCall({ a:100 }, { exact:100 });
 
-            var apiCallWithTimeout = jaw.promises.timeout(apiCall, 200);
-
-            assertThat(function(expectTimeoutError) {
-                try {
-                    assert.instanceOf(expectTimeoutError, Error);
-                    done();
-                } catch(e) {
-                    done(e);
-                }
-            })(apiCallWithTimeout());
-
-        });
-
-
-        it('rejects with an Error object part 2', function() {
-            var apiCall = mockApiCall({ a:100 }, { max:400 });
-
-            var apiCallWithTimeout = jaw.promises.timeout(apiCall, 200);
+            var apiCallWithTimeout = jaw.promises.timeout(apiCall, 50);
 
             apiCallWithTimeout()
                 .catch(function(expectTimeoutError) {
@@ -351,11 +334,11 @@ describe('Promises', function() {
         });
 
 
-        it('does not affect the call if within timeout', function() {
+        it('does not affect the call if within timeout', function(done) {
             var expected = { a:100 };
-            var apiCall = mockApiCall(expected, { max:200 });
+            var apiCall = mockApiCall(expected, { exact:100 });
 
-            var apiCallWithTimeout = jaw.promises.timeout(apiCall, 400);
+            var apiCallWithTimeout = jaw.promises.timeout(apiCall, 200);
 
             assertThat(done)(apiCallWithTimeout()).deepEqual(expected);
         });
