@@ -190,20 +190,21 @@ function reduce(promiseFns, consolidatorFn, acc) {
 
 function timeout(promiseFn, timeout) {
     var TIMED_OUT_MSG = 'TIMED OUT';
-    var hasTimedout = false;
+    var timeoutId = undefined;
 
     function timeoutDecorator(fn) {
         return function() {
-            if( hasTimedout ) return;
+            if( timeoutId===undefined ) return;
             clearTimeout(timeoutId);
+            timeoutId = undefined;
             fn.apply(this, arguments);
         };
     }
 
     return function() {
         return new Promise(function (resolve, reject) {
-            var timeoutId = setTimeout(function () {
-                hasTimedout = true;
+            timeoutId = setTimeout(function () {
+                timeoutId = undefined;
                 reject(new Error(TIMED_OUT_MSG));
             }, timeout);
 
