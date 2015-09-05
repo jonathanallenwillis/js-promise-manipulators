@@ -12,10 +12,13 @@
   },
   "devDependencies": {
     "mocha": "~2.2.5",
-    "chai": "3.2.0"
+    "chai": "3.2.0",
+    "coveralls": "~2.11.4",
+    "mocha-lcov-reporter": "0.0.2",
+    "istanbul": "~0.3.19"
   },
   "scripts": {
-    "env":  "env",
+    "env": "env",
     "test": "./run-tests.sh",
     "build": "./bin/build.sh"
   },
