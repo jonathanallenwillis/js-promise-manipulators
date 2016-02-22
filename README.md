@@ -61,4 +61,23 @@ getIpInfo = memoize(flatten(newGetIpInfo, ""))
 resulting in no other modifications in the app since the the getIpInfo works exactly the same.
 
 
+## TODO
+- [X] Add fluent interface
+- [ ] Make fluent interface more efficient. Use more oop stateful approach.
+- [ ] Make API more consistent
 
+### Add fluent interface
+```
+var newGetIpInfo = flatten(getIpInfo, "")
+ 			  .remap({ipv4: 'ip})
+			  .pluck(['isp', 'ip'])
+			  .memoize();
+
+newGetIpInfo()
+	.then(function(ipInfo) { console.log("IP: " + ipInfo.ip + " ISP: " + ipInfo.isp); });
+```
+
+### Make API more consistent
+Some functions operate on the result and some functions work on the promises before hand.
+
+There's a reduce for the result and a reduce for combining the promises which doesn't make sense.

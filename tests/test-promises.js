@@ -50,7 +50,7 @@ describe('Promises', function() {
             var assertThat = promiseTester(assert);
             assertThat(function(assertNoError){
                 done(assertNoError);
-            })(Promise.resolve(true)).ok()
+            })(Promise.resolve(true)).ok();
         });
 
         it('calls done on failure', function(done) {
@@ -263,6 +263,30 @@ describe('Promises', function() {
             var expected = {aaa: 4};
 
             assertThat(done)(apiCall())
+                .deepEqual(expected);
+
+        });
+
+        it('fluent interface', function(done) {
+            function double(x) {
+                return x * 2;
+            }
+
+            var data = {a: {a1: 1, a2: 2}, b: 2, c: 4};
+            var apiCall = mockApiCall(data, { max:100 });
+            debugger;
+            var newApiCall = manipulators.flatten(apiCall, '_')
+                    .transform({
+                        'a_a2': double,
+                        bogus: double
+                    })
+                    .remap({a_a2: 'aaa'})
+                    .rest()
+                    .first();
+           
+            var expected = {aaa: 4};
+
+            assertThat(done)(newApiCall())
                 .deepEqual(expected);
 
         });

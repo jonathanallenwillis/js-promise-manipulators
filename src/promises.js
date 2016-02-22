@@ -110,28 +110,94 @@ function promiseTester(assertApi) {
 
 
 /**
+ * Helper decorator function.
+ * Given:
+ *  - a promise producing function (apiCallFn)
+ *  - a result manipulation function
+ *  - the args for the manipulator function
+ *  - the full api of all manipulators
+ *
+ * Return a function that can be used in place of apiCallFn, which will have it's
+ * results manipulated by the manipulatorFn.
+ * 
+ *
+ * @param {} assertApi
+ * @returns {} 
+ */
+function helperDecorator(manipulatorFn, apiCallFn, args, api) {
+    args.unshift(manipulatorFn);
+    var manipulator = partialRight.apply(this, args);
+
+    return addFluentInterface(api, function newApiCall() {
+        return apiCallFn
+            .apply(this, arguments)
+            .then(manipulator);
+    });
+}
+
+/**
  * Given a data manipulation function, convert it into a promise result manipulating
  * function.
  *
  * @param manipulatorFn     A function that takes data as its first argument
+ * @param api               An object of static method calls
  * @returns {Function}      A function that can convert a promise producing
  *                          function so that it's final data has the manipulation
  *                          applied.
  */
-function promiseDecorator(manipulatorFn) {
-    return function(/* promiseFn, partialArgs* */) {
+function promiseDecorator(manipulatorFn, api) {
+    return function(/* apiCallFn, partialArgs* */) {
         var args = cloneArray(arguments);
-        var promiseFn = args.shift();
-        args.unshift(manipulatorFn);
-        //var fn = args.shift();
-        var manipulator = partialRight.apply(this, args);
-        return function() {
-            return promiseFn
-                    .apply(this, arguments)
-                    .then(manipulator);
-        };
+        var apiCallFn = args.shift();
+        return helperDecorator(manipulatorFn, apiCallFn, args, api);
     };
 }
+
+
+/**
+ * Given:
+ *  - a promise producing function
+ *  - a result manipulation function
+ *  - and the full api
+ *
+ * Return a function that can be used in place of apiCallFn which will have it's
+ * result modified by manipulatorFn.
+ *
+ * @param manipulatorFn     A function that takes data as its first argument
+ * @param apiCallFn         A promise returning function to be augmented by the
+ *                          fluent api.
+ * @param api               An object of static method calls
+ * @returns {Function}      A function that can convert a promise producing
+ *                          function so that it's final data has the manipulation
+ *                          applied.
+ *
+ * fluentApiDecorator :: Function -> Function -> Object
+ */
+function fluentApiDecorator(manipulatorFn, apiCallFn, api) {
+    return function() {
+        var args = cloneArray(arguments);
+        return helperDecorator(manipulatorFn, apiCallFn, args, api);
+    };
+}
+
+
+/**
+ * Given:
+ *  - an api of data manipulation functions
+ *  - a promise producing function.
+ * Augment the apicall with the methods from the api.
+ *
+ * @param {} api
+ * @param {} apiCall
+ * @returns {} 
+ */
+function addFluentInterface(api, apicall) {
+    Object.keys(api).forEach(function(fnName){
+        apicall[fnName] = fluentApiDecorator(api[fnName], apicall, api);
+    });
+    return apicall;
+}
+
 /**
  * Given an api of functions that take an object as their first argument,
  * wrap them in a promise so that the result of the promise has that
@@ -140,14 +206,14 @@ function promiseDecorator(manipulatorFn) {
  * @param api
  * @returns {object}
  */
-function bind(api) {
+function toPromiseManipulators(api) {
     return dataManipulators.reduce(api, function(newApi, fn, name) {
-        newApi[name] = promiseDecorator(fn);
+        newApi[name] = promiseDecorator(fn, api);
         return newApi;
     });
 }
 
-var manipulators = bind(dataManipulators);
+var manipulators = toPromiseManipulators(dataManipulators);
 
 /**
  * Given one or more promise returning functions and a consolidator function, call each
@@ -315,9 +381,9 @@ function memoize(promiseFn, identity) {
 
 module.exports = {
       promiseTester:        promiseTester
-    , mockApiCall:    mockApiCall
+    , mockApiCall:          mockApiCall
     , promiseDecorator:     promiseDecorator
-    , bind:                 bind
+    , toPromiseManipulators:toPromiseManipulators
     , manipulators:         manipulators
     , reduce:               reduce
     , timeout:              timeout

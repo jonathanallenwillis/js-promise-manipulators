@@ -1,6 +1,6 @@
 {
   "name": "jaw",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "Tools for manipulating data and data returned from promises.",
   "directories": {
     "example": "example",
@@ -11,15 +11,17 @@
     "es6-promise-polyfill": "~1.0.0"
   },
   "devDependencies": {
-    "mocha": "~2.2.5",
     "chai": "3.2.0",
     "coveralls": "~2.11.4",
-    "mocha-lcov-reporter": "0.0.2",
-    "istanbul": "~0.3.19"
+    "fsmonitor": "^0.2.4",
+    "istanbul": "~0.3.19",
+    "mocha": "~2.2.5",
+    "mocha-lcov-reporter": "0.0.2"
   },
   "scripts": {
     "env": "env",
     "test": "./run-tests.sh",
+    "test:watch": "fsmonitor -s -p '+src/*.js' '+tests/*.js' npm test",
     "build": "./bin/build.sh"
   },
   "repository": {
