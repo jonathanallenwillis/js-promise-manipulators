@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jonjitsu/js-promise-manipulators.svg?branch=master)](https://travis-ci.org/jonathanallenwillis/js-promise-manipulators) [![Coverage Status](https://coveralls.io/repos/jonathanallenwillis/js-promise-manipulators/badge.svg?branch=master&service=github)](https://coveralls.io/github/jonathanallenwillis/js-promise-manipulators?branch=master) 
+[![Build Status](https://travis-ci.org/jonjitsu/js-promise-manipulators.svg?branch=master)](https://travis-ci.org/jonjitsu/js-promise-manipulators) [![Coverage Status](https://coveralls.io/repos/jonjitsu/js-promise-manipulators/badge.svg?branch=master&service=github)](https://coveralls.io/github/jonjitsu/js-promise-manipulators?branch=master) 
 # Promise manipulators
 
 A set of functions that can be used to alter promise producing functions.
